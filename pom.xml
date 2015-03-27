@@ -6,6 +6,54 @@
 	<packaging>war</packaging>
 	<version>1.0</version>
 	<name>carmart</name>
+
+	<properties>
+		<!-- Explicitly declaring the source encoding eliminates the following 
+			message: -->
+		<!-- [WARNING] Using platform encoding (UTF-8 actually) to copy filtered 
+			resources, i.e. build is platform dependent! -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!-- JBoss dependency versions -->
+		<com.ocpsoft.prettyfaces.version>3.3.2</com.ocpsoft.prettyfaces.version>
+		<version.jboss.weld>1.1.8.Final</version.jboss.weld>
+		<version.com.sun.faces.jsf.impl>2.0.2</version.com.sun.faces.jsf.impl>
+
+		<version.org.infinispan>6.1.2.Final-redhat-1</version.org.infinispan>
+
+		<version.jboss.spec.javaee.6.0>3.0.2.Final-redhat-4</version.jboss.spec.javaee.6.0>
+
+		<version.org.jboss.jbossts.jta.narayana-jta>4.17.15.Final-redhat-4</version.org.jboss.jbossts.jta.narayana-jta>
+
+		<!-- This is the Management URL of EWS/Tomcat, so tomcat-maven-plugin can 
+			deploy this quickstart on EWS/Tomcat through this URL -->
+		<tomcat.management.url>http://localhost:8080/manager/text</tomcat.management.url>
+
+		<!-- other plugin versions -->
+		<version.jboss.maven.plugin>7.4.Final</version.jboss.maven.plugin>
+		<version.tomcat.maven.plugin>1.1</version.tomcat.maven.plugin>
+		<version.buildhelper.maven.plugin>1.7</version.buildhelper.maven.plugin>
+
+		<!-- other plugin versions -->
+		<version.war.plugin>2.2</version.war.plugin>
+		<version.maven.surefire>2.14</version.maven.surefire>
+
+		<!-- maven-compiler-plugin -->
+		<maven.compiler.target>1.6</maven.compiler.target>
+		<maven.compiler.source>1.6</maven.compiler.source>
+
+		<!-- test dependencies versions -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<junit.version>4.8.2</junit.version>
+		<arquillian.bom.version>1.1.1.Final</arquillian.bom.version>
+		<arquillian.drone.bom.version>1.2.0.Beta1</arquillian.drone.bom.version>
+		<jboss.as7.version>7.2.0.Final</jboss.as7.version>
+		<arquillian.selenium.version>2.35.0</arquillian.selenium.version>
+		<arquillian.graphene.version>2.0.0.Beta1</arquillian.graphene.version>
+		<browser>phantomjs</browser>
+
+	</properties>
+
 	<repositories>
 		<repository>
 			<id>eap</id>
@@ -30,37 +78,169 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.6</maven.compiler.source>
-		<maven.compiler.target>1.6</maven.compiler.target>
-	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.infinispan</groupId>
+				<artifactId>infinispan-bom</artifactId>
+				<version>${version.org.infinispan}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!-- Define the version of JBoss' Java EE 6 APIs we want to import. Any 
+				dependencies from org.jboss.spec will have their version defined by this 
+				BOM -->
+			<!-- JBoss distributes a complete set of Java EE 6 APIs including a Bill 
+				of Materials (BOM). A BOM specifies the versions of a "stack" (or a collection) 
+				of artifacts. We use this here so that we always get the correct versions 
+				of artifacts. Here we use the jboss-javaee-6.0 stack (you can read this as 
+				the JBoss stack of the Java EE 6 APIs). You can actually use this stack with 
+				any version of JBoss AS that implements Java EE 6, not just JBoss AS 7! -->
+			<dependency>
+				<groupId>org.jboss.spec</groupId>
+				<artifactId>jboss-javaee-6.0</artifactId>
+				<version>${version.jboss.spec.javaee.6.0}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jboss.jbossts.jta</groupId>
+				<artifactId>narayana-jta</artifactId>
+				<version>${version.org.jboss.jbossts.jta.narayana-jta}</version>
+				<scope>provided</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>jfree</groupId>
+						<artifactId>jfreechart</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>jfree</groupId>
+						<artifactId>jcommon</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.jboss.byteman</groupId>
+						<artifactId>byteman</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.jboss.byteman</groupId>
+						<artifactId>byteman-submit</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.hornetq</groupId>
+						<artifactId>hornetq-journal</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.hornetq</groupId>
+						<artifactId>hornetq-commons</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>io.netty</groupId>
+						<artifactId>netty</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.jboss.logmanager</groupId>
+						<artifactId>jboss-logmanager</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<!-- Import Prettyfaces dependency. This is a UNSUPPORTED component -->
+			<dependency>
+				<groupId>com.ocpsoft</groupId>
+				<artifactId>prettyfaces-jsf2</artifactId>
+				<version>${com.ocpsoft.prettyfaces.version}</version>
+				<scope>compile</scope>
+			</dependency>
+
+			<!-- added to run arquillian -->
+			<dependency>
+				<groupId>org.jboss.arquillian</groupId>
+				<artifactId>arquillian-bom</artifactId>
+				<version>${arquillian.bom.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jboss.arquillian.extension</groupId>
+				<artifactId>arquillian-drone-bom</artifactId>
+				<version>${arquillian.drone.bom.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+
+			<dependency>
+				<groupId>org.jboss.arquillian.selenium</groupId>
+				<artifactId>selenium-bom</artifactId>
+				<version>${arquillian.selenium.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
-<!--
-As updates are released for EAP the version of the provided jboss-javaee-6.0
-jar can change.  To ensure your application is compiling against the same jars
-that the runtime provides the <version> element below should match the
-installed version of EAP on the node hosting your application.  To determine
-the version of EAP running on the node, log into an example EAP application and
-look in the jbosseap/logs/server.log file for the line:
 
-... JBAS015874: JBoss EAP 6.1.1.GA (AS 7.2.1.Final-redhat-10) started ...
+		<!-- First declare the APIs we depend on and need for compilation. The 
+			dependencies with provided scope are provided by JBoss AS 7, The other compiled 
+			scoped dependencies will be add to the application libraries -->
 
-To determine the correct value for <version>, download the maven repository zip
-file corresponding to the installed version of EAP from the customer service
-portal [1].  Unzip the file and examine the single directory under
-jboss-eap-*-maven-repository/org/jboss/spec/jboss-javaee-6.0
-
-[1] https://access.redhat.com/jbossnetwork/restricted/listSoftware.html?downloadType=distributions&product=appplatform&productChanged=yes"
--->
+		<!-- Import the JSF API, we use provided scope as the API is included in 
+			JBoss AS 7 -->
 		<dependency>
-			<groupId>org.jboss.spec</groupId>
-			<artifactId>jboss-javaee-6.0</artifactId>
-			<version>3.0.2.Final-redhat-4</version>
-			<type>pom</type>
+			<groupId>org.jboss.spec.javax.faces</groupId>
+			<artifactId>jboss-jsf-api_2.1_spec</artifactId>
 			<scope>provided</scope>
 		</dependency>
+
+		<!-- Import the infinispan core -->
+		<dependency>
+			<groupId>org.infinispan</groupId>
+			<artifactId>infinispan-core</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Import the CDI API, we use provided scope as the API is included in JBoss EAP 6 -->
+		<dependency>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- Import the Common Annotations API (JSR-250), we use provided scope as the API is included in JBoss EAP 6 -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.annotation</groupId>
+			<artifactId>jboss-annotations-api_1.1_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- Import the JAX-RS API, we use provided scope as the API is included in JBoss EAP 6 -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.ws.rs</groupId>
+			<artifactId>jboss-jaxrs-api_1.1_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Import Prettyfaces dependency. This is a UNSUPPORTED component -->
+		<dependency>
+			<groupId>com.ocpsoft</groupId>
+			<artifactId>prettyfaces-jsf2</artifactId>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.infinispan</groupId>
+			<artifactId>infinispan-query</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
 	</dependencies>
+
+
 	<profiles>
 		<profile>
 			<!-- When built in OpenShift the 'openshift' profile will be used when 
@@ -78,6 +258,13 @@ jboss-eap-*-maven-repository/org/jboss/spec/jboss-javaee-6.0
 						<artifactId>maven-war-plugin</artifactId>
 						<version>2.1.1</version>
 						<configuration>
+						
+							<archive>
+​								<manifestEntries>
+​									<Dependencies>org.infinispan:jdg-6.3 services, org.infinispan.query:jdg-6.3 services, org.infinispan.persistence.leveldb:jdg-6.3 services</Dependencies>
+​								</manifestEntries>
+​							</archive>
+						
 							<outputDirectory>deployments</outputDirectory>
 							<warName>ROOT</warName>
 						</configuration>
