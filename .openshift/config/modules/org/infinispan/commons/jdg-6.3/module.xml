@@ -1,0 +1,17 @@
+<module xmlns="urn:jboss:module:1.1" name="org.infinispan.commons" slot="jdg-6.3">
+    <resources>
+        <resource-root path="infinispan-commons-6.1.2.Final-redhat-1.jar"/>
+        <!-- Insert resources here -->
+    </resources>
+
+    <dependencies>
+        <module name="javax.api"/>
+        <module name="javax.transaction.api"/>
+        <module name="javax.xml.bind.api"/>
+        <module name="net.jcip"/>
+        <module name="org.jboss.logging"/>
+        <module name="org.jboss.marshalling" slot="jdg-6.3"/>
+        <module name="org.jboss.marshalling.river" services="import" slot="jdg-6.3"/>
+        <module name="sun.jdk"/>
+    </dependencies>
+</module>

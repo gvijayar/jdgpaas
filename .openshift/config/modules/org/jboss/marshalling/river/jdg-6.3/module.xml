@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns="urn:jboss:module:1.1" name="org.jboss.marshalling.river" slot="jdg-6.3">
+    <resources>
+        <resource-root path="jboss-marshalling-river-1.4.5.Final-redhat-1.jar"/>
+        <!-- Insert resources here -->
+    </resources>
+
+    <dependencies>
+        <module name="org.jboss.marshalling" slot="jdg-6.3"/>
+    </dependencies>
+</module>
